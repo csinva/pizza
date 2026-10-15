@@ -1,3 +1,3 @@
 # pizza
 
-Hosted at https://csinva.github.io/pizza/
+Hosted at https://csinva.io/pizza/
