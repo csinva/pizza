@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Arthur Avenue Slice Crawl</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sign-style header, then a two-column counter: sticky street map left, ordered stops right (stacks on phones) */
+:root {
+  --bg: #FAF9F7;
+  --surface: #FFFFFF;
+  --ink: #1D1B19;
+  --muted: #6B655F;
+  --line: #E4DFD9;
+  --sauce: #C2321C;
+  --sauce-soft: #F8E3DE;
+  --basil: #2E6A3A;
+  --street: #D9D3CC;
+  --font-sign: "Shrikhand", "Georgia", serif;
+  --font-body: "Libre Franklin", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ticket: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161412; --surface: #1F1C19; --ink: #F1EDE8; --muted: #A69E96; --line: #34302B;
+    --sauce: #F0694E; --sauce-soft: #3A1F19; --basil: #84C493; --street: #3F3A34;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161412; --surface: #1F1C19; --ink: #F1EDE8; --muted: #A69E96; --line: #34302B;
+  --sauce: #F0694E; --sauce-soft: #3A1F19; --basil: #84C493; --street: #3F3A34;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+}
+.wrap {
+  max-width: 1040px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 48px;
+}
+header { display: grid; gap: 12px; padding-bottom: 24px; border-bottom: 2px solid var(--ink); }
+.eyebrow { font-family: var(--font-ticket); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--sauce); }
+h1 {
+  font-family: var(--font-sign); font-weight: 400; color: var(--sauce);
+  font-size: clamp(2.4rem, 7vw, 4.2rem); line-height: 1.02; margin: 0; text-wrap: balance;
+}
+.lede { margin: 0; max-width: 60ch; color: var(--ink); font-size: 1.05rem; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 4px; font-family: var(--font-ticket); font-size: 14px; color: var(--muted); }
+.facts b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.route-btn {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin-top: 6px;
+  background: var(--sauce); color: var(--bg); text-decoration: none; font-weight: 600;
+  padding: 11px 18px; border-radius: 999px; font-size: 15px;
+}
+.route-btn:hover { filter: brightness(1.08); }
+.route-btn:focus-visible, a:focus-visible { outline: 3px solid var(--basil); outline-offset: 3px; }
+
+main { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 40px; margin-top: 32px; align-items: start; }
+@media (max-width: 760px) { main { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+
+.map-card { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 8px; }
+@media (max-width: 760px) { .map-card { position: static; } }
+.map-card svg { width: 100%; max-width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.map-note { font-size: 12.5px; color: var(--muted); font-family: var(--font-ticket); }
+
+.stops { list-style: none; margin: 0; padding: 0; display: grid; }
+.stop { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
+.num {
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sauce); color: var(--bg); font-family: var(--font-sign); font-size: 20px; padding-top: 2px;
+}
+.body { display: grid; gap: 6px; padding-bottom: 8px; min-width: 0; }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.stop h2 { margin: 0; font-size: 1.3rem; font-weight: 700; line-height: 1.25; text-wrap: balance; }
+.stop h2 a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
+.stop h2 a:hover { border-bottom-color: var(--sauce); }
+.time { font-family: var(--font-ticket); font-weight: 500; font-size: 15px; color: var(--sauce); font-variant-numeric: tabular-nums; }
+.addr { font-family: var(--font-ticket); font-size: 13px; color: var(--muted); }
+.order { margin: 4px 0 0; }
+.order span { font-family: var(--font-ticket); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--basil); margin-right: 6px; }
+.note { margin: 0; color: var(--muted); max-width: 62ch; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font-family: var(--font-ticket); font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.tag.warn { border-color: var(--sauce); color: var(--sauce); background: var(--sauce-soft); }
+.walk { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: center; padding-block: 6px 14px; }
+.walk .rail { justify-self: center; width: 0; height: 34px; border-left: 2px dashed var(--sauce); }
+.walk span { font-family: var(--font-ticket); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.rules { margin-top: 44px; padding-top: 24px; border-top: 2px solid var(--ink); display: grid; gap: 12px; }
+.rules h3 { margin: 0; font-family: var(--font-sign); font-weight: 400; color: var(--sauce); font-size: 1.7rem; }
+.rules ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 66ch; }
+.fine { margin-top: 28px; font-size: 13px; color: var(--muted); max-width: 70ch; }
+@media (prefers-reduced-motion: no-preference) { .route-btn { transition: filter .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Belmont · The Bronx · Saturday, Oct 17</div>
+    <h1>Arthur Avenue Slice Crawl</h1>
+    <p class="lede">Five slice counters in Bronx Little Italy, walked east to west along 187th, then north up Arthur Ave to 191st. One slice each per stop, and pace yourself.</p>
+    <div class="facts">
+      <div><b>5</b> stops</div>
+      <div><b id="totalDist">—</b> on foot</div>
+      <div><b>12:30–3:30 PM</b></div>
+      <div>Bring <b>cash</b></div>
+    </div>
+    <a class="route-btn" id="routeLink" href="https://www.google.com/maps/dir/?api=1&travelmode=walking" target="_blank" rel="noopener">Open the walking route in Google Maps ↗</a>
+  </header>
+
+  <main>
+    <figure class="map-card" style="margin:0">
+      <svg id="map" viewBox="0 0 360 440" role="img" aria-label="Street sketch of the five stops around Arthur Avenue and East 187th Street"></svg>
+      <figcaption class="map-note">To scale, north up. Dashed line shows stop order, not exact sidewalks.</figcaption>
+    </figure>
+
+    <ol class="stops" id="stops"></ol>
+  </main>
+
+  <section class="rules">
+    <h3>House rules</h3>
+    <ul>
+      <li>Split slices if you're a group of four or more. Five full slices is a lot of pizza.</li>
+      <li>Ivana's is cash only (ATM inside), and it closes at 6 PM.</li>
+      <li>Pugsley has the most seating, so save sitting down for the last stop.</li>
+      <li>Want dessert after? Arthur Ave is lined with pastry shops for a cannoli on the way out.</li>
+    </ul>
+  </section>
+
+  <p class="fine">Hours are Saturday hours from Google listings as of Oct 14, 2026. Small shops change things, so check the listing before you head out.</p>
+</div>
+
+<script>
+const STOPS = [
+  { name: "Joe's Little Italy Pizza", time: "12:30 PM", addr: "710 E 187th St", lat: 40.8538929, lon: -73.8841568,
+    hours: "Sat 10 AM–10 PM", order: "Margherita slice", note: "A quiet, clean warm-up stop with friendly counter staff. Regulars rave about the margherita.",
+    url: "https://maps.google.com/?cid=4701440938597198533", label: { dx: -16, dy: 4, anchor: "end" } },
+  { name: "Ivana's Pizzeria", time: "1:00 PM", addr: "2373 Arthur Ave", lat: 40.8550232, lon: -73.8882162,
+    hours: "Sat 8 AM–6 PM", order: "Plain cheese slice", note: "Old-school counter run by Italian speakers. Big, thin, crispy slices with a good sauce-to-cheese balance, at low prices.",
+    tags: ["Cash only"], url: "https://maps.google.com/?cid=12481502490359270641", label: { dx: -16, dy: 18, anchor: "start" } },
+  { name: "Mezza Luna Pizza", time: "1:30 PM", addr: "600 E 187th St", lat: 40.8553028, lon: -73.8875914,
+    hours: "Sat 11 AM–9:30 PM", order: "Buffalo chicken slice", note: "The former Full Moon, right at 187th and Arthur, and the busiest counter on the strip. Know your order before you reach the front.",
+    url: "https://maps.google.com/?cid=2575135363575955435", label: { dx: 16, dy: 4, anchor: "start" } },
+  { name: "Arthur Ave Crust & Kitchen", time: "2:00 PM", addr: "2483 Arthur Ave", lat: 40.8575816, lon: -73.8860807,
+    hours: "Sat 9 AM–midnight", order: "A burek to split", note: "Pizza plus Albanian burek. The meat and spinach bureks are the favorites, and they make a good break from slices.",
+    url: "https://maps.google.com/?cid=16740309138144167422", label: { dx: -16, dy: 4, anchor: "end" } },
+  { name: "Pugsley Pizza", time: "2:45 PM", addr: "590 E 191st St", lat: 40.8587496, lon: -73.8848173,
+    hours: "Sat 11 AM–3:30 AM", order: "Slice with the house hot oil", note: "A family-run Fordham favorite with graffiti on the walls and booths to sit in. They hit a gong when your order is up.",
+    url: "https://maps.google.com/?cid=3619731013626267111", label: { dx: 16, dy: -10, anchor: "end" } }
+];
+
+function meters(a, b) {
+  const R = 6371000, toR = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * toR, dLon = (b.lon - a.lon) * toR;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * toR) * Math.cos(b.lat * toR) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+// Street grid detour: walked distance runs about 1.3x straight-line here; ~80 m per minute
+const walkM = (a, b) => meters(a, b) * 1.3;
+
+// Stops list
+const list = document.getElementById("stops");
+let total = 0;
+STOPS.forEach((s, i) => {
+  const li = document.createElement("li");
+  li.className = "stop";
+  const tags = [s.hours, ...(s.tags || [])].map((t, j) =>
+    `<span class="tag${j > 0 ? " warn" : ""}">${t}</span>`).join("");
+  li.innerHTML = `
+    <div class="num" aria-hidden="true">${i + 1}</div>
+    <div class="body">
+      <div class="top">
+        <h2><a href="${s.url}" target="_blank" rel="noopener">${s.name}</a></h2>
+        <span class="time">${s.time}</span>
+      </div>
+      <div class="addr">${s.addr}</div>
+      <p class="order"><span>Order</span>${s.order}</p>
+      <p class="note">${s.note}</p>
+      <div class="tags">${tags}</div>
+    </div>`;
+  list.appendChild(li);
+  if (i < STOPS.length - 1) {
+    const m = walkM(s, STOPS[i + 1]);
+    total += m;
+    const w = document.createElement("li");
+    w.className = "walk";
+    w.setAttribute("aria-label", "Walk to next stop");
+    w.innerHTML = `<div class="rail"></div><span>about ${Math.max(1, Math.round(m / 80))} min walk · ${Math.round(m / 10) * 10} m</span>`;
+    list.appendChild(w);
+  }
+});
+document.getElementById("totalDist").textContent = (total / 1609).toFixed(1) + " mi";
+
+// Google Maps walking directions, all five stops in order
+const q = s => encodeURIComponent(`${s.name}, ${s.addr}, Bronx, NY`);
+const mid = STOPS.slice(1, -1).map(q).join("%7C");
+document.getElementById("routeLink").href =
+  `https://www.google.com/maps/dir/?api=1&origin=${q(STOPS[0])}&destination=${q(STOPS[STOPS.length - 1])}&waypoints=${mid}&travelmode=walking`;
+
+// Map, projected to scale
+const svg = document.getElementById("map");
+const NS = "http://www.w3.org/2000/svg";
+const W = 360, H = 440, PAD = 46;
+const lat0 = 40.856, kx = Math.cos(lat0 * Math.PI / 180);
+const pts = STOPS.map(s => ({ x: s.lon * kx, y: -s.lat }));
+const minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
+const minY = Math.min(...pts.map(p => p.y)), maxY = Math.max(...pts.map(p => p.y));
+const scale = Math.min((W - 2 * PAD - 80) / (maxX - minX), (H - 2 * PAD) / (maxY - minY));
+const offX = (W - (maxX - minX) * scale) / 2 + 20, offY = (H - (maxY - minY) * scale) / 2;
+const P = (lat, lon) => [offX + (lon * kx - minX) * scale, offY + (-lat - minY) * scale];
+function el(tag, attrs, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text) e.textContent = text;
+  svg.appendChild(e);
+  return e;
+}
+// Streets drawn as lines through known points on each, extended to the frame
+function street(a, b, name, labelAt, rot) {
+  const [x1, y1] = P(a.lat, a.lon), [x2, y2] = P(b.lat, b.lon);
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, ext = 600;
+  el("line", { x1: x1 - ux * ext, y1: y1 - uy * ext, x2: x2 + ux * ext, y2: y2 + uy * ext,
+    stroke: "var(--street)", "stroke-width": 14, "stroke-linecap": "round" });
+  const lx = x1 + ux * labelAt, ly = y1 + uy * labelAt;
+  const ang = rot ?? Math.atan2(uy, ux) * 180 / Math.PI;
+  el("text", { x: lx, y: ly + 3.5, "text-anchor": "middle", transform: `rotate(${ang} ${lx} ${ly})`,
+    fill: "var(--muted)", "font-family": "IBM Plex Mono, monospace", "font-size": 9, "letter-spacing": "1.2" }, name);
+}
+const [joe, ivana, mezza, crust, pugs] = STOPS;
+street(ivana, crust, "ARTHUR AVE", -60);
+street(mezza, joe, "E 187TH ST", 125);
+// 191st runs roughly parallel to 187th through Pugsley's
+const slope = { lat: joe.lat - mezza.lat, lon: joe.lon - mezza.lon };
+street({ lat: pugs.lat - slope.lat, lon: pugs.lon - slope.lon }, pugs, "E 191ST ST", 40);
+
+const xy = STOPS.map(s => P(s.lat, s.lon));
+el("polyline", { points: xy.map(p => p.join(",")).join(" "), fill: "none",
+  stroke: "var(--sauce)", "stroke-width": 2.5, "stroke-dasharray": "6 5", "stroke-linecap": "round" });
+STOPS.forEach((s, i) => {
+  const [x, y] = xy[i];
+  el("circle", { cx: x, cy: y, r: 12, fill: "var(--sauce)", stroke: "var(--surface)", "stroke-width": 3 });
+  el("text", { x, y: y + 4.5, "text-anchor": "middle", fill: "var(--surface)",
+    "font-family": "Shrikhand, Georgia, serif", "font-size": 13 }, String(i + 1));
+  const L = s.label;
+  let lx = x + L.dx, ly = y + L.dy;
+  if (i === 1) { lx = x - 70; ly = y + 30; }
+  if (i === 4) { lx = x + 4; ly = y - 22; }
+  el("text", { x: lx, y: ly, "text-anchor": i === 4 ? "middle" : L.anchor, fill: "var(--ink)",
+    "font-family": "Libre Franklin, system-ui, sans-serif", "font-size": 11.5, "font-weight": 600 },
+    s.name.replace(" Pizzeria", "").replace(" Pizza", "").replace("Arthur Ave ", ""));
+});
+// North arrow
+el("text", { x: W - 22, y: 26, "text-anchor": "middle", fill: "var(--muted)", "font-family": "IBM Plex Mono, monospace", "font-size": 11 }, "N");
+el("path", { d: `M ${W - 22} 32 l -5 12 l 5 -3 l 5 3 z`, fill: "var(--muted)" });
+</script>
