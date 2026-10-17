@@ -1,0 +1,38 @@
+/* Route maps from tools/build_maps.py; shared by every crawl page */
+:root {
+  --map-bg: #F4F1EC;
+  --map-street: #FFFFFF;
+  --map-park: #DCE8D2;
+  --map-ink: #6B655F;
+  --map-label: #1D1B19;
+  --map-sauce: #C2321C;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --map-bg: #24201C;
+    --map-street: #3A342E;
+    --map-park: #263325;
+    --map-ink: #A69E96;
+    --map-label: #F1EDE8;
+    --map-sauce: #F0694E;
+  }
+}
+.map { margin: 32px 0 0; display: grid; gap: 8px; }
+.route-map {
+  --sauce: var(--map-sauce);
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--line, #E4DFD9); border-radius: 12px; overflow: hidden;
+}
+.route-map text { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+.route-map .street-name { font-size: 9.5px; letter-spacing: 1.2px; fill: var(--map-ink); }
+.route-map .pin-num { font-family: "Shrikhand", Georgia, serif; font-size: 14px; fill: var(--map-bg); text-anchor: middle; }
+.route-map .pin-num.extra { font-family: "Libre Franklin", system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: var(--map-sauce); }
+.route-map .pin-label {
+  font-family: "Libre Franklin", system-ui, sans-serif; font-size: 13px; font-weight: 700; fill: var(--map-label);
+  paint-order: stroke; stroke: var(--map-bg); stroke-width: 4px; stroke-linejoin: round;
+}
+.route-map .map-chrome text { font-size: 10px; fill: var(--map-ink); }
+.route-map .map-chrome .attrib { font-size: 8.5px; }
+.map figcaption { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--muted, #6B655F); }
+.map figcaption b { font-weight: 500; color: var(--ink, #1D1B19); }
+.map figcaption a { color: inherit; }

@@ -49,10 +49,6 @@ h1 {
 .route-btn:hover { filter: brightness(1.08); }
 a:focus-visible { outline: 3px solid var(--basil); outline-offset: 3px; }
 
-.map { margin: 32px 0 0; display: grid; gap: 8px; }
-.map img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; }
-.map figcaption { font-family: var(--font-ticket); font-size: 12.5px; color: var(--muted); }
-
 h2.section { font-family: var(--font-sign); font-weight: 400; color: var(--sauce); font-size: 1.7rem; margin: 44px 0 16px; }
 .stops { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
 .stop {
