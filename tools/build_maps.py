@@ -22,10 +22,10 @@ ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "tools" / "cache"
 UA = "csinva-pizza-map-build (https://github.com/csinva/pizza)"
 
-W, H = 640, 400          # every map shares this frame (16:10)
+W, H = 640, 600          # every map shares this frame, near-square to sit beside the stops
 PAD = 48                 # px kept clear around the stops and route
-STREET_FONT = 9.5        # matches .street-name in map.css
-PIN_FONT = 13            # matches .pin-label in map.css
+STREET_FONT = 11         # matches .street-name in map.css
+PIN_FONT = 15.5         # matches .pin-label in map.css
 
 # Stops in walking order; "extras" get a hollow pin and no route.
 CRAWLS = {
@@ -198,10 +198,10 @@ def abbreviate(name):
 def place_pin_labels(points, names, obstacles):
     """Put each stop's name on the first side of its pin that clears the frame, pins and other labels."""
     placed = []
-    sides = ((22, 4.5, "start"), (-22, 4.5, "end"), (0, -21, "middle"), (0, 30, "middle"),
-             (16, -15, "start"), (-16, -15, "end"), (16, 25, "start"), (-16, 25, "end"))
+    sides = ((25, 5.5, "start"), (-25, 5.5, "end"), (0, -24, "middle"), (0, 35, "middle"),
+             (19, -18, "start"), (-19, -18, "end"), (19, 29, "start"), (-19, 29, "end"))
     for i, ((x, y), name) in enumerate(zip(points, names)):
-        tw, th = len(name) * PIN_FONT * 0.56, 14
+        tw, th = len(name) * PIN_FONT * 0.56, 17
         choice = None
         for dx, dy, anchor in sides:
             lx, ly = x + dx, y + dy
@@ -271,7 +271,7 @@ def place_street_labels(slug, streets, route_pts, obstacles):
         run, c, boxes = best
         taken += boxes
         pid = f"st-{slug}-{len(out)}"
-        dy = -10 if routed else 3.3  # beside the route line, or centred in the street
+        dy = -12 if routed else 3.8  # beside the route line, or centred in the street
         out.append(f'<path id="{pid}" d="{path_d(run)}" fill="none"/>'
                    f'<text class="street-name" dy="{dy}"><textPath href="#{pid}" startOffset="{c:.0f}" '
                    f'text-anchor="middle">{escape(label)}</textPath></text>')
@@ -294,7 +294,7 @@ def render(slug, cfg, refresh):
     names = [n for n, _, _ in stops + extras]
     pins = [frame.xy(lat, lon) for _, lat, lon in stops + extras]
 
-    pin_boxes = [(x - 15, y - 15, x + 15, y + 15) for x, y in pins]
+    pin_boxes = [(x - 18, y - 18, x + 18, y + 18) for x, y in pins]
     chrome = [(0, H - 26, 200, H), (W - 200, H - 22, W, H), (W - 40, 0, W, 50)]
     pin_labels = place_pin_labels(pins, names, pin_boxes)
     street_labels = place_street_labels(slug, streets, route_pts, pin_boxes + [p[3] for p in pin_labels] + chrome)
@@ -316,11 +316,11 @@ def render(slug, cfg, refresh):
 
     for i, ((x, y), (lx, ly, anchor, _)) in enumerate(zip(pins, pin_labels)):
         if i >= len(stops):
-            out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="11" fill="var(--map-bg)" stroke="var(--sauce)" stroke-width="2.5"/>'
-                       f'<text class="pin-num extra" x="{x:.1f}" y="{y + 7.5:.1f}">*</text>')
+            out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="13" fill="var(--map-bg)" stroke="var(--sauce)" stroke-width="2.5"/>'
+                       f'<text class="pin-num extra" x="{x:.1f}" y="{y + 9:.1f}">*</text>')
         else:
-            out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="13" fill="var(--sauce)" stroke="var(--map-bg)" stroke-width="3"/>'
-                       f'<text class="pin-num" x="{x:.1f}" y="{y + 5:.1f}">{i + 1}</text>')
+            out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="15.5" fill="var(--sauce)" stroke="var(--map-bg)" stroke-width="3"/>'
+                       f'<text class="pin-num" x="{x:.1f}" y="{y + 6:.1f}">{i + 1}</text>')
         out.append(f'<text class="pin-label" x="{lx:.1f}" y="{ly:.1f}" text-anchor="{anchor}">{escape(names[i])}</text>')
 
     # Scale bar (a round number of meters near 90 px), north arrow, attribution

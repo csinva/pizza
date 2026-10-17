@@ -17,22 +17,33 @@
     --map-sauce: #F0694E;
   }
 }
-.map { margin: 32px 0 0; display: grid; gap: 8px; }
+/* Map pinned on the left while the stops scroll beside it; stacks on narrow screens */
+.crawl-layout {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px;
+  align-items: start; margin-top: 28px;
+}
+.crawl-layout > .map { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.crawl-side > :first-child { margin-top: 0; }
+@media (max-width: 860px) {
+  .crawl-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .crawl-layout > .map { position: static; }
+}
+.map { margin: 0; display: grid; gap: 8px; }
 .route-map {
   --sauce: var(--map-sauce);
   display: block; width: 100%; height: auto;
   border: 1px solid var(--line, #E4DFD9); border-radius: 12px; overflow: hidden;
 }
 .route-map text { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
-.route-map .street-name { font-size: 9.5px; letter-spacing: 1.2px; fill: var(--map-ink); }
-.route-map .pin-num { font-family: "Shrikhand", Georgia, serif; font-size: 14px; fill: var(--map-bg); text-anchor: middle; }
-.route-map .pin-num.extra { font-family: "Libre Franklin", system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: var(--map-sauce); }
+.route-map .street-name { font-size: 11px; letter-spacing: 1.2px; fill: var(--map-ink); }
+.route-map .pin-num { font-family: "Shrikhand", Georgia, serif; font-size: 17px; fill: var(--map-bg); text-anchor: middle; }
+.route-map .pin-num.extra { font-family: "Libre Franklin", system-ui, sans-serif; font-size: 23px; font-weight: 700; fill: var(--map-sauce); }
 .route-map .pin-label {
-  font-family: "Libre Franklin", system-ui, sans-serif; font-size: 13px; font-weight: 700; fill: var(--map-label);
+  font-family: "Libre Franklin", system-ui, sans-serif; font-size: 15.5px; font-weight: 700; fill: var(--map-label);
   paint-order: stroke; stroke: var(--map-bg); stroke-width: 4px; stroke-linejoin: round;
 }
-.route-map .map-chrome text { font-size: 10px; fill: var(--map-ink); }
-.route-map .map-chrome .attrib { font-size: 8.5px; }
+.route-map .map-chrome text { font-size: 12px; fill: var(--map-ink); }
+.route-map .map-chrome .attrib { font-size: 10px; }
 .map figcaption { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--muted, #6B655F); }
 .map figcaption b { font-weight: 500; color: var(--ink, #1D1B19); }
 .map figcaption a { color: inherit; }

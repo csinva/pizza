@@ -33,43 +33,50 @@ img { max-width: 100%; display: block; }
 }
 .back { font-family: var(--font-ticket); font-size: 13px; color: var(--muted); text-decoration: none; }
 .back:hover { color: var(--sauce); }
-header { display: grid; gap: 12px; padding-block: 16px 24px; border-bottom: 2px solid var(--ink); }
+header {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-auto-flow: row dense;
+  column-gap: 24px; row-gap: 8px; padding-block: 12px 18px; border-bottom: 2px solid var(--ink);
+}
+header > * { grid-column: 1 / -1; }
+header > .facts { grid-column: 1; align-self: center; margin: 0; }
+header > .route-btn { grid-column: 2; align-self: center; margin: 0; }
+@media (max-width: 640px) { header > .route-btn { grid-column: 1 / -1; } }
 .eyebrow { font-family: var(--font-ticket); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--sauce); }
 h1 {
   font-family: var(--font-sign); font-weight: 400; color: var(--sauce);
-  font-size: clamp(2.4rem, 7vw, 4.2rem); line-height: 1.02; margin: 0; text-wrap: balance;
+  font-size: clamp(2.2rem, 5.5vw, 3.4rem); line-height: 1.02; margin: 0; text-wrap: balance;
 }
 .facts { display: flex; flex-wrap: wrap; gap: 8px 24px; font-family: var(--font-ticket); font-size: 14px; color: var(--muted); }
 .facts b { color: var(--ink); font-weight: 500; }
 .route-btn {
   justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px;
   background: var(--sauce); color: var(--bg); text-decoration: none; font-weight: 600;
-  padding: 11px 18px; border-radius: 999px; font-size: 15px;
+  padding: 9px 16px; border-radius: 999px; font-size: 14.5px; white-space: nowrap;
 }
 .route-btn:hover { filter: brightness(1.08); }
 a:focus-visible { outline: 3px solid var(--basil); outline-offset: 3px; }
 
-h2.section { font-family: var(--font-sign); font-weight: 400; color: var(--sauce); font-size: 1.7rem; margin: 44px 0 16px; }
-.stops { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+/* Compact stop cards: a photo strip on the left, text on the right, so they fit beside the map */
+h2.section { font-family: var(--font-sign); font-weight: 400; color: var(--sauce); font-size: 1.45rem; margin: 28px 0 12px; }
+.stops { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .stop {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  display: grid; grid-template-columns: 128px minmax(0, 1fr); min-height: 128px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
 }
-@media (max-width: 700px) { .stop { grid-template-columns: minmax(0, 1fr); } }
-.stop .photos { display: grid; gap: 2px; min-width: 0; }
-.stop .photos.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.stop .photos img { width: 100%; height: 100%; min-width: 0; object-fit: cover; aspect-ratio: 4 / 3; }
-.stop .body { display: grid; align-content: center; gap: 10px; padding: 22px 24px; }
-.stop .top { display: flex; align-items: center; gap: 12px; }
+@media (max-width: 520px) { .stop { grid-template-columns: 104px minmax(0, 1fr); } }
+.stop .photos { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stop .photos img { flex: 1 1 0; min-height: 64px; width: 100%; object-fit: cover; }
+.stop .body { display: grid; align-content: center; gap: 6px; padding: 14px 16px; }
+.stop .top { display: flex; align-items: center; gap: 10px; }
 .num {
-  flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--sauce); color: var(--bg); font-family: var(--font-sign); font-size: 20px; padding-top: 2px;
+  flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sauce); color: var(--bg); font-family: var(--font-sign); font-size: 16px; padding-top: 2px;
 }
-.num.extra { background: transparent; color: var(--sauce); border: 2px solid var(--sauce); font-size: 24px; padding-top: 8px; }
-.stop h3 { margin: 0; font-size: 1.35rem; line-height: 1.25; text-wrap: balance; }
+.num.extra { background: transparent; color: var(--sauce); border: 2px solid var(--sauce); font-size: 20px; padding-top: 7px; }
+.stop h3 { margin: 0; font-size: 1.12rem; line-height: 1.25; text-wrap: balance; }
 .stop h3 a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
 .stop h3 a:hover { border-bottom-color: var(--sauce); }
-.stop p { margin: 0; max-width: 60ch; }
+.stop p { margin: 0; max-width: 60ch; font-size: 15px; line-height: 1.5; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag { font-family: var(--font-ticket); font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 .tag.warn { border-color: var(--sauce); color: var(--sauce); background: var(--sauce-soft); }
